@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SplitRent — Expense Calculator</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- Background blobs -->
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+  <div class="bg-blob blob-3"></div>
+
+  <!-- Theme toggle -->
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+    <i class="fa-solid fa-sun" id="themeIcon"></i>
+  </button>
+
+  <main class="container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo">
+        <span class="logo-icon"><i class="fa-solid fa-building-columns"></i></span>
+        <span class="logo-text">SplitRent</span>
+      </div>
+      <p class="tagline">Split shared expenses fairly & instantly</p>
+    </header>
+
+    <!-- Calculator Card -->
+    <section class="card" id="calcCard">
+      <div class="card-header">
+        <h2 class="card-title">Monthly Expense Breakdown</h2>
+        <span class="card-badge"><i class="fa-solid fa-bolt"></i> Live Calc</span>
+      </div>
+
+      <form id="rentForm" novalidate>
+        <div class="fields-grid">
+
+          <!-- Rent -->
+          <div class="field-group">
+            <label for="rent">
+              <span class="field-icon"><i class="fa-solid fa-house"></i></span>
+              Hostel / Flat Rent
+            </label>
+            <div class="input-wrapper">
+              <span class="input-prefix">₹</span>
+              <input type="number" id="rent" name="rent" placeholder="0.00" min="0" step="0.01" autocomplete="off" />
+            </div>
+            <span class="error-msg" id="rentError"></span>
+          </div>
+
+          <!-- Food -->
+          <div class="field-group">
+            <label for="food">
+              <span class="field-icon"><i class="fa-solid fa-utensils"></i></span>
+              Food Expenses
+            </label>
+            <div class="input-wrapper">
+              <span class="input-prefix">₹</span>
+              <input type="number" id="food" name="food" placeholder="0.00" min="0" step="0.01" autocomplete="off" />
+            </div>
+            <span class="error-msg" id="foodError"></span>
+          </div>
+
+          <!-- Units consumed -->
+          <div class="field-group">
+            <label for="units">
+              <span class="field-icon"><i class="fa-solid fa-plug-circle-bolt"></i></span>
+              Electricity Units Consumed
+            </label>
+            <div class="input-wrapper">
+              <span class="input-suffix">kWh</span>
+              <input type="number" id="units" name="units" placeholder="0" min="0" step="0.1" autocomplete="off" />
+            </div>
+            <span class="error-msg" id="unitsError"></span>
+          </div>
+
+          <!-- Charge per unit -->
+          <div class="field-group">
+            <label for="rate">
+              <span class="field-icon"><i class="fa-solid fa-indian-rupee-sign"></i></span>
+              Charge Per Unit
+            </label>
+            <div class="input-wrapper">
+              <span class="input-prefix">₹</span>
+              <input type="number" id="rate" name="rate" placeholder="0.00" min="0" step="0.01" autocomplete="off" />
+            </div>
+            <span class="error-msg" id="rateError"></span>
+          </div>
+
+          <!-- Persons -->
+          <div class="field-group field-full">
+            <label for="persons">
+              <span class="field-icon"><i class="fa-solid fa-people-group"></i></span>
+              Number of Persons Living
+            </label>
+            <div class="input-wrapper persons-wrapper">
+              <button type="button" class="stepper-btn" id="decBtn" aria-label="Decrease"><i class="fa-solid fa-minus"></i></button>
+              <input type="number" id="persons" name="persons" placeholder="1" min="1" step="1" value="" autocomplete="off" />
+              <button type="button" class="stepper-btn" id="incBtn" aria-label="Increase"><i class="fa-solid fa-plus"></i></button>
+            </div>
+            <span class="error-msg" id="personsError"></span>
+          </div>
+
+        </div><!-- /fields-grid -->
+
+        <!-- Actions -->
+        <div class="action-row">
+          <button type="button" id="resetBtn" class="btn btn-ghost">
+            <i class="fa-solid fa-rotate-left"></i> Reset
+          </button>
+          <button type="submit" id="calcBtn" class="btn btn-primary">
+            <i class="fa-solid fa-calculator"></i> Calculate
+          </button>
+        </div>
+
+      </form>
+    </section>
+
+    <!-- Results Card -->
+    <section class="card results-card hidden" id="resultsCard">
+      <div class="card-header">
+        <h2 class="card-title">Your Results</h2>
+        <span class="card-badge success"><i class="fa-solid fa-check"></i> Done</span>
+      </div>
+
+      <div class="results-grid">
+        <div class="result-tile" id="tile-electricity">
+          <div class="tile-icon electricity"><i class="fa-solid fa-bolt"></i></div>
+          <div class="tile-body">
+            <span class="tile-label">Total Electricity Bill</span>
+            <span class="tile-value" id="elecResult">—</span>
+          </div>
+        </div>
+
+        <div class="result-tile" id="tile-total">
+          <div class="tile-icon total"><i class="fa-solid fa-receipt"></i></div>
+          <div class="tile-body">
+            <span class="tile-label">Total Expenses</span>
+            <span class="tile-value" id="totalResult">—</span>
+          </div>
+        </div>
+
+        <div class="result-tile featured" id="tile-per-person">
+          <div class="tile-icon person"><i class="fa-solid fa-user-tag"></i></div>
+          <div class="tile-body">
+            <span class="tile-label">Each Person Pays</span>
+            <span class="tile-value large" id="perPersonResult">—</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="breakdown-bar" id="breakdownBar">
+        <div class="bar-segment rent-seg" id="rentSeg" title="Rent"></div>
+        <div class="bar-segment food-seg" id="foodSeg" title="Food"></div>
+        <div class="bar-segment elec-seg" id="elecSeg" title="Electricity"></div>
+      </div>
+      <div class="bar-legend">
+        <span class="legend-dot rent-dot"></span><span>Rent</span>
+        <span class="legend-dot food-dot"></span><span>Food</span>
+        <span class="legend-dot elec-dot"></span><span>Electricity</span>
+      </div>
+
+    </section>
+
+    <!-- History Card -->
+    <section class="card history-card hidden" id="historyCard">
+      <div class="card-header">
+        <h2 class="card-title"><i class="fa-solid fa-clock-rotate-left"></i> Calculation History</h2>
+        <button class="btn btn-ghost btn-sm" id="clearHistoryBtn" title="Clear all history">
+          <i class="fa-solid fa-trash"></i> Clear All
+        </button>
+      </div>
+      <div id="historyList" class="history-list"></div>
+      <p class="history-empty hidden" id="historyEmpty">
+        <i class="fa-solid fa-inbox"></i><br>No history yet. Calculate something first!
+      </p>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
